@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Lab 4 — 2 Number Calculator</title>
+  <style>
+    :root{
+      --bg:#f3f6fb;
+      --card:#ffffff;
+      --accent:#2b7cff;
+      --muted:#6b7280;
+      --danger:#e03b3b;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:linear-gradient(180deg,var(--bg),#e9eef8);
+      padding:24px;
+      color:#111827;
+    }
+
+    .calculator{
+      width:100%;
+      max-width:420px;
+      background:var(--card);
+      border-radius:12px;
+      padding:20px;
+      box-shadow:0 8px 30px rgba(15,23,42,0.08);
+    }
+
+    h1{
+      margin:0 0 12px 0;
+      font-size:20px;
+      letter-spacing:0.2px;
+    }
+
+    .row{
+      display:flex;
+      gap:10px;
+      margin-bottom:12px;
+    }
+
+    label{
+      display:block;
+      font-size:13px;
+      color:var(--muted);
+      margin-bottom:6px;
+    }
+
+    input[type="text"], input[type="number"]{
+      flex:1;
+      padding:10px 12px;
+      border:1px solid #dbe4f2;
+      border-radius:8px;
+      font-size:16px;
+      outline:none;
+      transition:box-shadow .12s, border-color .12s;
+    }
+    input:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 0 4px rgba(43,124,255,0.08);
+    }
+
+    .ops{
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:10px;
+      margin-bottom:12px;
+    }
+
+    button.op{
+      padding:10px 8px;
+      border-radius:8px;
+      border:1px solid #dbe4f2;
+      background:white;
+      cursor:pointer;
+      font-weight:600;
+      font-size:15px;
+      transition:transform .06s ease, box-shadow .06s;
+    }
+    button.op:active{ transform:translateY(1px); }
+    button.op:hover{ box-shadow:0 6px 16px rgba(16,24,40,0.06); }
+
+    .controls{
+      display:flex;
+      gap:10px;
+      margin-bottom:12px;
+    }
+
+    button.wide{
+      flex:1;
+      padding:10px 12px;
+      border-radius:8px;
+      border: none;
+      background:var(--accent);
+      color:white;
+      font-weight:700;
+      cursor:pointer;
+      font-size:15px;
+    }
+    button.ghost{
+      padding:10px 12px;
+      border-radius:8px;
+      border:1px solid #dbe4f2;
+      background:white;
+      cursor:pointer;
+      font-weight:600;
+      font-size:15px;
+    }
+
+    .output{
+      padding:12px;
+      border-radius:8px;
+      background:#f8fafc;
+      border:1px dashed #e6eefb;
+      color:#0f172a;
+      font-weight:700;
+      text-align:center;
+      font-size:18px;
+      min-height:48px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .error{
+      color:var(--danger);
+      font-size:13px;
+      margin-top:8px;
+      text-align:center;
+    }
+
+    footer.small{
+      margin-top:12px;
+      font-size:12px;
+      color:var(--muted);
+      text-align:center;
+    }
+
+    @media (max-width:420px){
+      .ops{ grid-template-columns:repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <main class="calculator" aria-labelledby="title">
+    <h1 id="title">Lab 4 — 2 Number Calculator</h1>
+
+    <div>
+      <label for="a">Number A</label>
+      <input id="a" type="text" inputmode="decimal" autocomplete="off" placeholder="e.g. 12.34" />
+    </div>
+
+    <div style="margin-top:10px;">
+      <label for="b">Number B</label>
+      <input id="b" type="text" inputmode="decimal" autocomplete="off" placeholder="e.g. 3" />
+    </div>
+
+    <div style="margin-top:12px;">
+      <label>Operation</label>
+      <div class="ops" role="group" aria-label="Operations">
+        <button class="op" data-op="add" title="A + B">Add +</button>
+        <button class="op" data-op="sub" title="A - B">Sub -</button>
+        <button class="op" data-op="mul" title="A × B">Mul ×</button>
+        <button class="op" data-op="div" title="A ÷ B">Div ÷</button>
+        <button class="op" data-op="mod" title="A % B">Mod %</button>
+        <button class="op" data-op="pow" title="A ^ B">Pow ^</button>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="compute" class="wide" title="Compute (also Enter)">Compute</button>
+      <button id="clear" class="ghost" title="Clear inputs">Clear</button>
+    </div>
+
+    <div class="output" id="result" aria-live="polite">Result will appear here</div>
+    <div class="error" id="error" role="alert" aria-atomic="true" style="display:none;"></div>
+
+    <footer class="small">Tip: type numbers and press <kbd>Enter</kbd> or click Compute. Click an operation first to select it.</footer>
+  </main>
+
+  <script>
+    // Simple, robust calculator logic
+    (function(){
+      const aEl = document.getElementById('a');
+      const bEl = document.getElementById('b');
+      const ops = document.querySelectorAll('button.op');
+      const computeBtn = document.getElementById('compute');
+      const clearBtn = document.getElementById('clear');
+      const resultEl = document.getElementById('result');
+      const errorEl = document.getElementById('error');
+
+      // default operation
+      let currentOp = 'add';
+      // visually mark selected op
+      function setSelectedOp(op){
+        currentOp = op;
+        ops.forEach(btn => btn.style.outline = (btn.dataset.op === op) ? '2px solid rgba(43,124,255,0.18)' : '');
+      }
+      // initialize
+      setSelectedOp(currentOp);
+
+      ops.forEach(btn=>{
+        btn.addEventListener('click', ()=> {
+          setSelectedOp(btn.dataset.op);
+        });
+      });
+
+      function parseNumber(str){
+        // Trim and accept comma or dot decimals (commas are converted)
+        if (typeof str !== 'string') str = String(str);
+        const cleaned = str.trim().replace(',', '.');
+        if (cleaned === '') return NaN;
+        // parseFloat handles decimals and exponents
+        return parseFloat(cleaned);
+      }
+
+      function showError(msg){
+        errorEl.textContent = msg;
+        errorEl.style.display = 'block';
+      }
+      function clearError(){
+        errorEl.textContent = '';
+        errorEl.style.display = 'none';
+      }
+
+      function compute(){
+        clearError();
+        const aVal = parseNumber(aEl.value);
+        const bVal = parseNumber(bEl.value);
+
+        if (Number.isNaN(aVal) || Number.isNaN(bVal)){
+          showError('Please enter valid numbers for both Number A and Number B.');
+          resultEl.textContent = '—';
+          return;
+        }
+
+        let out;
+        try {
+          switch(currentOp){
+            case 'add':
+              out = aVal + bVal;
+              break;
+            case 'sub':
+              out = aVal - bVal;
+              break;
+            case 'mul':
+              out = aVal * bVal;
+              break;
+            case 'div':
+              if (bVal === 0){
+                showError('Cannot divide by zero.');
+                resultEl.textContent = '—';
+                return;
+              }
+              out = aVal / bVal;
+              break;
+            case 'mod':
+              if (bVal === 0){
+                showError('Modulo by zero is not allowed.');
+                resultEl.textContent = '—';
+                return;
+              }
+              out = aVal % bVal;
+              break;
+            case 'pow':
+              // limit huge exponents to avoid Infinity in display
+              if (Math.abs(bVal) > 1000){
+                showError('Exponent too large.');
+                resultEl.textContent = '—';
+                return;
+              }
+              out = Math.pow(aVal, bVal);
+              break;
+            default:
+              showError('Unknown operation.');
+              resultEl.textContent = '—';
+              return;
+          }
+
+          // Format output: show up to 12 significant digits, but avoid scientific where not necessary
+          if (!Number.isFinite(out)){
+            resultEl.textContent = String(out);
+          } else {
+            // choose fixed or toPrecision based on magnitude
+            const abs = Math.abs(out);
+            if ((abs !== 0 && (abs < 1e-6 || abs > 1e12))){
+              resultEl.textContent = out.toExponential(6);
+            } else {
+              // round to 10 decimal places max while keeping integers clean
+              const rounded = Math.round((out + Number.EPSILON) * 1e10) / 1e10;
+              resultEl.textContent = (Number.isInteger(rounded)) ? String(rounded) : String(rounded);
+            }
+          }
+        } catch (err){
+          showError('An unexpected error occurred.');
+          resultEl.textContent = '—';
+          console.error(err);
+        }
+      }
+
+      computeBtn.addEventListener('click', compute);
+      clearBtn.addEventListener('click', ()=>{
+        aEl.value = '';
+        bEl.value = '';
+        setSelectedOp('add');
+        resultEl.textContent = 'Result will appear here';
+        clearError();
+        aEl.focus();
+      });
+
+      // allow Enter to compute when focus is in any input
+      [aEl, bEl].forEach(inp=>{
+        inp.addEventListener('keydown', (e)=>{
+          if (e.key === 'Enter'){
+            e.preventDefault();
+            compute();
+          }
+        });
+      });
+
+      // Add keyboard shortcuts for operations (optional)
+      document.addEventListener('keydown', (e)=>{
+        // keys: + - * / % ^ or keys 1..6 for ops
+        if (e.key === '+') setSelectedOp('add');
+        else if (e.key === '-') setSelectedOp('sub');
+        else if (e.key === '*') setSelectedOp('mul');
+        else if (e.key === '/') setSelectedOp('div');
+        else if (e.key === '%') setSelectedOp('mod');
+        else if (e.key === '^') setSelectedOp('pow');
+      });
+
+      // small usability: focus first input on load
+      aEl.focus();
+    })();
+  </script>
+</body>
+</html>
