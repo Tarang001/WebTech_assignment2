@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design a Table</title>
+    <style>
+        body {
+            font-family: Times, serif;
+            margin: 20px;
+            background-color: #f8f8f8;
+        }
+
+        h1 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .main-table {
+            border: 3px double #e91e63;
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 800px;
+            height: 400px;
+        }
+
+        .main-cell {
+            border: 3px double #e91e63;
+            padding: 20px;
+            vertical-align: top;
+            position: relative;
+        }
+
+        .cell-top-left {
+            width: 50%;
+            height: 50%;
+        }
+
+        .cell-top-right {
+            width: 50%;
+            height: 50%;
+        }
+
+        .cell-bottom-left {
+            width: 50%;
+            height: 50%;
+        }
+
+        .cell-bottom-right {
+            width: 50%;
+            height: 50%;
+        }
+
+        .nested-table {
+            border: 3px double #9c27b0;
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+            height: 120px;
+            margin-top: 20px;
+        }
+
+        .nested-cell {
+            border: 2px double #9c27b0;
+            padding: 15px;
+            text-align: center;
+            vertical-align: middle;
+            width: 50%;
+            height: 50%;
+        }
+
+        .table-label {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .table-1-label {
+            font-size: 20px;
+            color: #666;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .list-content {
+            margin-top: 40px;
+        }
+
+        .list-title {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .list-items {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .list-items li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>1. Design a table.</h1>
+    
+    <table class="main-table">
+        <tr>
+            <td class="main-cell cell-top-left">
+                <div class="table-1-label">Table 1</div>
+            </td>
+            <td class="main-cell cell-top-right">
+                <div class="table-label">Table 1</div>
+                <table class="nested-table">
+                    <tr>
+                        <td class="nested-cell">Table 2</td>
+                        <td class="nested-cell">Table 2</td>
+                    </tr>
+                    <tr>
+                        <td class="nested-cell">Table 2</td>
+                        <td class="nested-cell">Table 2</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td class="main-cell cell-bottom-left">
+                <div class="list-content">
+                    <div class="list-title">This contains a list</div>
+                    <ul class="list-items">
+                        <li>item-1</li>
+                        <li>item-2</li>
+                    </ul>
+                </div>
+            </td>
+            <td class="main-cell cell-bottom-right">
+                <div class="table-1-label">Table 1</div>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
