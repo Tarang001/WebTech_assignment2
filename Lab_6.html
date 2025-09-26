@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Weather Report</title>
+</head>
+<body>
+    <div style="margin:30px; font-family:serif;">
+        <h2 style="margin-bottom:10px; font-weight:400;">Weather Report</h2>
+        <input id="pincode" type="text" value="522007" style="width:170px; height:26px; font-size:18px; background:#e3f2fd;">
+        <button onclick="getWeather()" style="height:28px; vertical-align:middle;">click</button>
+        <div id="result" style="margin-top:22px;">
+            <!-- Results will be shown here -->
+        </div>
+    </div>
+
+    <script>
+        function getWeather() {
+            var pincode = document.getElementById('pincode').value;
+            // Use a free API: Get city from pincode (India)
+            fetch('https://api.postalpincode.in/pincode/' + pincode)
+            .then(response => response.json())
+            .then(data => {
+                var city = '';
+                if(data && data[0] && data[0].PostOffice && data[0].PostOffice[0]) {
+                    city = data[0].PostOffice[0].District;
+                } else {
+                    city = "Unknown";
+                }
+
+                // Use OpenWeatherMap API to get temperature
+                // Replace 'YOUR_API_KEY' with a valid key
+                fetch('https://api.openweathermap.org/data/2.5/weather?q=' + city + ',IN&appid=63b509e0fb1d7206c1e213914d5ab64c&units=metric')
+                .then(response => response.json())
+                .then(weather => {
+                    var temp = weather.main && weather.main.temp ? weather.main.temp : 'N/A';
+                    document.getElementById('result').innerHTML =
+                        '<div style="font-size:20px; margin-bottom:10px;">Temp=' + temp + '*c</div>' +
+                        '<div style="font-size:20px;">City:' + city + '</div>';
+                }).catch(() => {
+                    document.getElementById('result').innerHTML =
+                        '<div style="font-size:20px; margin-bottom:10px;">Temp=N/A</div>' +
+                        '<div style="font-size:20px;">City:' + city + '</div>';
+                });
+            }).catch(() => {
+                document.getElementById('result').innerHTML =
+                    '<div style="font-size:20px; margin-bottom:10px;">Temp=N/A</div>' +
+                    '<div style="font-size:20px;">City:Unknown</div>';
+            });
+        }
+    </script>
+</body>
+</html>

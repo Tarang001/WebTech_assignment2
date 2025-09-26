@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Grid Layout Example</title>
+  <style>
+    body {
+      background: #eaeaea;
+      margin: 0;
+      padding: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      display: grid;
+      grid-template-areas:
+        "header header header"
+        "menu main ad1"
+        "ad2 main ad1"
+        "footer footer footer";
+      grid-template-columns: 1fr 2fr 1fr;
+      grid-template-rows: 80px 1.5fr 1fr 70px;
+      gap: 0;
+      width: 830px;
+      height: 530px;
+      border: 10px solid #ff0037;
+      background: #4444aa;
+      box-sizing: border-box;
+    }
+    .header {
+      grid-area: header;
+      background: #4444aa;
+      color: white;
+      font-weight: bold;
+      font-size: 2em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 5px solid #ff0037;
+    }
+    .menu {
+      grid-area: menu;
+      background: #6875c4;
+      color: white;
+      font-weight: bold;
+      font-size: 1.4em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-right: 5px solid #ff0037;
+      border-bottom: 5px solid #ff0037;
+    }
+    .main {
+      grid-area: main;
+      background: #6875c4;
+      color: white;
+      font-weight: bold;
+      font-size: 1.6em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ad1 {
+      grid-area: ad1;
+      background: #6875c4;
+      color: white;
+      font-weight: bold;
+      font-size: 1.4em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-left: 5px solid #ff0037;
+      border-bottom: 5px solid #ff0037;
+    }
+    .ad2 {
+      grid-area: ad2;
+      background: #6875c4;
+      color: white;
+      font-weight: bold;
+      font-size: 1.3em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-right: 5px solid #ff0037;
+    }
+    .footer {
+      grid-area: footer;
+      background: #4444aa;
+      color: white;
+      font-weight: bold;
+      font-size: 1.7em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-top: 5px solid #ff0037;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">Header</div>
+    <div class="menu">Menu</div>
+    <div class="main">Main</div>
+    <div class="ad1">Ad1</div>
+    <div class="ad2">Ad2</div>
+    <div class="footer">Footer</div>
+  </div>
+</body>
+</html>
